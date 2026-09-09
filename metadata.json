@@ -1,0 +1,6 @@
+{
+  "name": "Поздравление для Елены",
+  "description": "Кинематографический поздравительный лендинг в тёплых тонах шампанского и золота для продюсера Елены.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

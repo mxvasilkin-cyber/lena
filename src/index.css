@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+  }
+  .font-serif-display {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+  .font-cormorant {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+}
+
+/* Subtle warm film glow */
+.champagne-glow {
+  box-shadow: 0 10px 40px -10px rgba(212, 175, 55, 0.18), 0 0 25px 0 rgba(245, 233, 215, 0.5);
+}
+
+.gold-border {
+  border-color: rgba(200, 162, 89, 0.35);
+}
+
+/* Film strip edge simulation */
+.film-strip-edge {
+  background-image: radial-gradient(circle, #2D261E 35%, transparent 40%);
+  background-size: 14px 14px;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.03);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
