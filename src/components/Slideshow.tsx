@@ -11,10 +11,33 @@ export const Slideshow: React.FC<SlideshowProps> = ({ slides, onSlideshowComplet
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState<boolean>(true);
   const [progress, setProgress] = useState<number>(0);
+  const [failedAttempts, setFailedAttempts] = useState<Record<number, number>>({});
   const timerRef = useRef<number | null>(null);
 
   const SLIDE_DURATION = 6000; // 6 seconds per slide
   const currentSlide = slides[currentIndex] || slides[0];
+
+  // Helper to determine image source path: tries /photos/01.jpg, then /01.jpg, then fallback
+  const getDisplayUrl = (slide: SlideItem, index: number) => {
+    const attempts = failedAttempts[slide.id] || 0;
+    const name = slide.fileName || `${String(index + 1).padStart(2, '0')}.jpg`;
+    if (attempts === 0) {
+      return `/photos/${name}`;
+    } else if (attempts === 1) {
+      return `/${name}`;
+    } else {
+      return slide.fallbackUrl || slide.imageUrl;
+    }
+  };
+
+  const handleImgError = (slideId: number) => {
+    setFailedAttempts((prev) => ({
+      ...prev,
+      [slideId]: (prev[slideId] || 0) + 1,
+    }));
+  };
+
+  const currentDisplayUrl = getDisplayUrl(currentSlide, currentIndex);
 
   const handleNext = () => {
     if (currentIndex === slides.length - 1) {
@@ -63,12 +86,12 @@ export const Slideshow: React.FC<SlideshowProps> = ({ slides, onSlideshowComplet
   }, [currentIndex, isAutoPlaying, slides.length, onSlideshowComplete]);
 
   return (
-    <section id="slideshow" className="relative py-8 sm:py-12 px-4 sm:px-6 max-w-5xl mx-auto">
+    <section id="slideshow" className="relative py-8 sm:py-12 px-4 sm:px-6 max-w-4xl mx-auto">
       {/* Film Strip Header Accent */}
-      <div className="flex items-center justify-between mb-4 pb-2 border-b border-[#E8DFC8]/70">
+      <div className="flex items-center justify-between mb-4 pb-2 border-b border-[#E8DFC8]/70 max-w-lg mx-auto">
         <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#8C6D2B]">
           <Film className="w-4 h-4 text-[#D4AF37]" />
-          <span>Киноархив и кадры памяти</span>
+          <span>Киноархив</span>
         </div>
 
         <div className="flex items-center gap-3">
@@ -87,28 +110,39 @@ export const Slideshow: React.FC<SlideshowProps> = ({ slides, onSlideshowComplet
       </div>
 
       {/* Progress Bar for current slide */}
-      <div className="w-full bg-[#EAE0CD] h-1 rounded-full mb-5 overflow-hidden">
+      <div className="w-full max-w-lg mx-auto bg-[#EAE0CD] h-1 rounded-full mb-5 overflow-hidden">
         <div
           className="bg-gradient-to-r from-[#D4AF37] to-[#BFA054] h-full transition-all duration-100 ease-linear rounded-full"
           style={{ width: `${progress}%` }}
         />
       </div>
 
-      {/* Main Cinema Viewport */}
-      <div className="relative rounded-2xl overflow-hidden bg-[#241F1A] border border-[#D9C8A5] shadow-2xl champagne-glow aspect-[4/3] sm:aspect-[16/10] max-h-[640px] flex items-center justify-center">
+      {/* Main Cinema Viewport Optimized for Vertical Photos */}
+      <div className="relative rounded-2xl overflow-hidden bg-[#18130E] border border-[#D9C8A5] shadow-2xl champagne-glow max-w-sm sm:max-w-md md:max-w-lg mx-auto aspect-[3/4] sm:aspect-[4/5] max-h-[78vh] flex items-center justify-center">
         {/* Subtle Decorative Film Sprocket Perforations on edges */}
-        <div className="absolute top-2 left-3 right-3 hidden sm:flex justify-between pointer-events-none z-20 opacity-30">
-          {Array.from({ length: 14 }).map((_, i) => (
+        <div className="absolute top-2 left-3 right-3 flex justify-between pointer-events-none z-20 opacity-25">
+          {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="w-2.5 h-1.5 rounded-[2px] bg-[#FAF7F2]" />
           ))}
         </div>
-        <div className="absolute bottom-2 left-3 right-3 hidden sm:flex justify-between pointer-events-none z-20 opacity-30">
-          {Array.from({ length: 14 }).map((_, i) => (
+        <div className="absolute bottom-2 left-3 right-3 flex justify-between pointer-events-none z-20 opacity-25">
+          {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="w-2.5 h-1.5 rounded-[2px] bg-[#FAF7F2]" />
           ))}
         </div>
 
-        {/* Media rendering (Image or Video) */}
+        {/* Ambient atmospheric background blur from photo */}
+        <img
+          src={currentDisplayUrl}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-35 scale-110 pointer-events-none transition-opacity duration-700"
+        />
+
+        {/* Cinematic Vignette */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#120D09]/50 via-transparent to-[#120D09]/30 pointer-events-none z-10" />
+
+        {/* Vertical Photo Presentation - No text obstructions */}
         {currentSlide.isVideo && currentSlide.videoUrl ? (
           <video
             src={currentSlide.videoUrl}
@@ -116,50 +150,25 @@ export const Slideshow: React.FC<SlideshowProps> = ({ slides, onSlideshowComplet
             muted
             loop
             playsInline
-            className="w-full h-full object-cover"
+            className="relative z-10 w-full h-full object-cover"
           />
         ) : (
           <img
-            src={currentSlide.imageUrl}
-            alt={currentSlide.title}
-            className="w-full h-full object-cover transition-opacity duration-700 select-none"
+            key={`${currentSlide.id}-${failedAttempts[currentSlide.id] || 0}`}
+            src={currentDisplayUrl}
+            alt={`Кадр ${String(currentIndex + 1).padStart(2, '0')}`}
+            onError={() => handleImgError(currentSlide.id)}
+            className="relative z-10 w-full h-full object-cover transition-opacity duration-700 select-none"
             referrerPolicy="no-referrer"
           />
         )}
-
-        {/* Cinematic Vignette Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1A140F]/90 via-transparent to-[#1A140F]/30 pointer-events-none" />
-
-        {/* Bottom Caption Overlay */}
-        <div className="absolute bottom-0 inset-x-0 p-5 sm:p-8 z-20 text-[#FAF7F2]">
-          <div className="max-w-3xl">
-            {currentSlide.category && (
-              <span className="inline-block text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-[#E6C687] bg-[#3B3126]/80 px-2.5 py-1 rounded-md mb-2 backdrop-blur-sm border border-[#D4AF37]/30">
-                {currentSlide.category}
-              </span>
-            )}
-            <h3 className="font-serif-display text-xl sm:text-3xl font-semibold tracking-wide text-[#FDFBF7] drop-shadow-md">
-              {currentSlide.title || `Кадр ${String(currentIndex + 1).padStart(2, '0')}`}
-            </h3>
-            {currentSlide.subtitle && (
-              <p className="text-xs sm:text-sm text-[#E0D7C9] mt-1 font-medium font-cormorant sm:text-lg italic">
-                {currentSlide.subtitle}
-              </p>
-            )}
-            {currentSlide.caption && (
-              <p className="text-xs sm:text-sm text-[#C8BFB0] mt-1.5 line-clamp-2 max-w-2xl font-light">
-                {currentSlide.caption}
-              </p>
-            )}
-          </div>
-        </div>
 
         {/* Navigation Arrows */}
         <button
           id="slide-prev-button"
           onClick={handlePrev}
           aria-label="Предыдущий кадр"
-          className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#1F1914]/60 hover:bg-[#1F1914]/90 backdrop-blur-md text-[#FAF7F2] flex items-center justify-center border border-[#D4AF37]/40 hover:border-[#D4AF37] transition-all hover:scale-105"
+          className="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#1F1914]/65 hover:bg-[#1F1914]/90 backdrop-blur-md text-[#FAF7F2] flex items-center justify-center border border-[#D4AF37]/40 hover:border-[#D4AF37] transition-all hover:scale-105"
         >
           <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
@@ -168,14 +177,14 @@ export const Slideshow: React.FC<SlideshowProps> = ({ slides, onSlideshowComplet
           id="slide-next-button"
           onClick={handleNext}
           aria-label="Следующий кадр"
-          className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#1F1914]/60 hover:bg-[#1F1914]/90 backdrop-blur-md text-[#FAF7F2] flex items-center justify-center border border-[#D4AF37]/40 hover:border-[#D4AF37] transition-all hover:scale-105"
+          className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#1F1914]/65 hover:bg-[#1F1914]/90 backdrop-blur-md text-[#FAF7F2] flex items-center justify-center border border-[#D4AF37]/40 hover:border-[#D4AF37] transition-all hover:scale-105"
         >
           <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
       </div>
 
-      {/* Thumbnails / Dots strip (supports any number of slides) */}
-      <div className="mt-5 flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap max-w-2xl mx-auto px-2">
+      {/* Thumbnails / Dots strip for 16 slides */}
+      <div className="mt-5 flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap max-w-lg mx-auto px-2">
         {slides.map((slide, idx) => (
           <button
             key={slide.id || idx}
@@ -185,7 +194,7 @@ export const Slideshow: React.FC<SlideshowProps> = ({ slides, onSlideshowComplet
             }}
             className={`transition-all duration-300 rounded-full ${
               idx === currentIndex
-                ? 'w-7 sm:w-9 h-2 bg-[#D4AF37]'
+                ? 'w-7 sm:w-8 h-2 bg-[#D4AF37]'
                 : 'w-2 h-2 bg-[#DBCFBA] hover:bg-[#BFB097]'
             }`}
             title={`Кадр ${idx + 1}`}

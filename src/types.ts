@@ -1,9 +1,11 @@
 export interface SlideItem {
   id: number;
-  title: string;
-  subtitle: string;
-  category: string;
+  title?: string;
+  subtitle?: string;
+  category?: string;
   imageUrl: string;
+  fallbackUrl?: string;
+  fileName?: string;
   isVideo?: boolean;
   videoUrl?: string;
   caption?: string;

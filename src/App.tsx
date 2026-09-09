@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { Header } from './components/Header';
 import { Slideshow } from './components/Slideshow';
 import { Clapperboard } from './components/Clapperboard';
-import { DEFAULT_SLIDES } from './data/slides';
+import { getSlides } from './data/slides';
 import { SlideItem } from './types';
 import { Sparkles, Film, Heart } from 'lucide-react';
 
 export default function App() {
-  const [slides] = useState<SlideItem[]>(DEFAULT_SLIDES);
+  const [slides] = useState<SlideItem[]>(getSlides());
   const [customAudioUrl, setCustomAudioUrl] = useState<string | null>(null);
 
   const handleAudioUpload = (file: File) => {

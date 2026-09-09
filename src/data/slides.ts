@@ -1,121 +1,48 @@
 import { SlideItem, WishItem } from '../types';
 
 /**
- * Универсальные подписи для любого фото:
- * подходят как для самой Елены, так и для фото с родителями,
- * любимыми котами, грамотами/наградами, съёмочной площадки и семейного архива.
+ * 16 вертикальных фотографий: 01.jpg, 02.jpg ... 16.jpg.
+ * Файлы можно положить как в public/photos/ (например public/photos/01.jpg),
+ * так и прямо в корень папки public/ (public/01.jpg).
  */
-export const DEFAULT_SLIDES: SlideItem[] = [
-  {
-    id: 1,
-    title: "Кадр 01: Момент чистой радости",
-    subtitle: "То, что согревает сердце",
-    category: "ИЗ АРХИВА",
-    imageUrl: "https://images.unsplash.com/photo-1518173946687-a4c8a383392e?q=80&w=1600&auto=format&fit=crop",
-    caption: "Особенные мгновения, которые остаются в памяти навсегда и дарят свет."
-  },
-  {
-    id: 2,
-    title: "Кадр 02: Самые родные и любимые",
-    subtitle: "Любовь, забота и поддержка",
-    category: "ТЕПЛО И БЛИЗКИЕ",
-    imageUrl: "https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=1600&auto=format&fit=crop",
-    caption: "Главная опора и надежный тыл — те, кто искренне верит и всегда рядом."
-  },
-  {
-    id: 3,
-    title: "Кадр 03: Повод для настоящей гордости",
-    subtitle: "Признание, заслуги и важные шаги",
-    category: "ДОСТИЖЕНИЯ",
-    imageUrl: "https://images.unsplash.com/photo-1513326738677-b964603b136d?q=80&w=1600&auto=format&fit=crop",
-    caption: "За каждой наградой и успехом стоит огромное мастерство, душа и преданность делу."
-  },
-  {
-    id: 4,
-    title: "Кадр 04: Домашнее тепло и уют",
-    subtitle: "Маленькие радости каждого дня",
-    category: "ДОМАШНИЙ УЮТ",
-    imageUrl: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=1600&auto=format&fit=crop",
-    caption: "Пушистое счастье, покой и безмятежность, где можно просто быть собой."
-  },
-  {
-    id: 5,
-    title: "Кадр 05: Вдохновение и улыбка",
-    subtitle: "Свет, который заряжает всё вокруг",
-    category: "АТМОСФЕРА",
-    imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1600&auto=format&fit=crop",
-    caption: "Обаяние, тонкий вкус и внутренняя сила, объединяющая людей."
-  },
-  {
-    id: 6,
-    title: "Кадр 06: Семейное сокровище",
-    subtitle: "Связь поколений и тёплые объятия",
-    category: "СЕМЬЯ",
-    imageUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1600&auto=format&fit=crop",
-    caption: "Дорогие сердцу воспоминания, наполненные благодарностью и теплом."
-  },
-  {
-    id: 7,
-    title: "Кадр 07: Счастливые мгновения",
-    subtitle: "Жизнь в ярких деталях",
-    category: "ПАМЯТНЫЙ КАДР",
-    imageUrl: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=1600&auto=format&fit=crop",
-    caption: "Ценные секунды, пойманные в объектив с большой искренней любовью."
-  },
-  {
-    id: 8,
-    title: "Кадр 08: Победы и триумфы",
-    subtitle: "Мастерство и признание",
-    category: "ПРИЗНАНИЕ",
-    imageUrl: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1600&auto=format&fit=crop",
-    caption: "Когда труд приносит прекрасные плоды и вдохновляет идти дальше."
-  },
-  {
-    id: 9,
-    title: "Кадр 09: Уютные дни и душевность",
-    subtitle: "Там, где спокойно и хорошо",
-    category: "ТЕПЛОТА",
-    imageUrl: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1600&auto=format&fit=crop",
-    caption: "Простые радости, добрые улыбки и гармония, которая остаётся навсегда."
-  },
-  {
-    id: 10,
-    title: "Кадр 10: В кругу бесконечно близких",
-    subtitle: "Верность, преданность и радость",
-    category: "ЛЮБИМЫЕ",
-    imageUrl: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1600&auto=format&fit=crop",
-    caption: "Самые дорогие взгляды и моменты, которые дороже всего на свете."
-  },
-  {
-    id: 11,
-    title: "Кадр 11: Прекрасная героиня",
-    subtitle: "Красота, мудрость и свет",
-    category: "ГЛАВНАЯ РОЛЬ",
-    imageUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1600&auto=format&fit=crop",
-    caption: "Неповторимая Елена. Переходим к праздничным поздравлениям!"
-  }
+export const PHOTO_NAMES = [
+  '01.jpg', '02.jpg', '03.jpg', '04.jpg',
+  '05.jpg', '06.jpg', '07.jpg', '08.jpg',
+  '09.jpg', '10.jpg', '11.jpg', '12.jpg',
+  '13.jpg', '14.jpg', '15.jpg', '16.jpg'
 ];
 
-/**
- * Генератор универсальной подписи для любого количества дополнительных кадров (12, 13, 20+)
- */
-export function getUniversalSlideDefaults(index: number, total: number): Partial<SlideItem> {
-  const padIndex = String(index + 1).padStart(2, '0');
-  const universalCaptions = [
-    { title: `Кадр ${padIndex}: Светлый момент`, subtitle: "В копилку лучших воспоминаний", category: "ПАМЯТЬ" },
-    { title: `Кадр ${padIndex}: Дорогие сердцу`, subtitle: "Любовь и искреннее тепло", category: "ТЕПЛО" },
-    { title: `Кадр ${padIndex}: Повод для улыбки`, subtitle: "Радость в каждом мгновении", category: "УЛЫБКА" },
-    { title: `Кадр ${padIndex}: Домашнее счастье`, subtitle: "Уют, покой и гармония", category: "УЮТ" },
-    { title: `Кадр ${padIndex}: Важный триумф`, subtitle: "Заслуженный успех и гордость", category: "УСПЕХ" },
-  ];
+// Резервные вертикальные фотографии в теплой гамме (на случай пока пользователь не зальет файлы в public)
+const FALLBACK_VERTICAL_IMAGES = [
+  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=1200&auto=format&fit=crop", // коты / домашний уют
+  "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=1200&auto=format&fit=crop", // семья / родители
+  "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=1200&auto=format&fit=crop", // кино
+  "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1513326738677-b964603b136d?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1518173946687-a4c8a383392e?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1200&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?q=80&w=1200&auto=format&fit=crop"
+];
 
-  const pick = universalCaptions[index % universalCaptions.length];
+export const DEFAULT_SLIDES: SlideItem[] = PHOTO_NAMES.map((name, index) => {
   return {
-    title: pick.title,
-    subtitle: pick.subtitle,
-    category: pick.category,
-    caption: "Особенное мгновение жизни, наполненное теплом и радостью."
+    id: index + 1,
+    fileName: name,
+    imageUrl: `/photos/${name}`,
+    fallbackUrl: FALLBACK_VERTICAL_IMAGES[index % FALLBACK_VERTICAL_IMAGES.length]
   };
+});
+
+export function getSlides(): SlideItem[] {
+  return DEFAULT_SLIDES;
 }
 
 export const CINEMA_WISHES: WishItem[] = [

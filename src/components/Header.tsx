@@ -9,37 +9,41 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ customAudioUrl, onAudioUpload }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [audioError, setAudioError] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Handle audio play/pause
   const togglePlay = () => {
     if (isPlaying) {
-      if (audioRef.current && customAudioUrl) {
+      if (audioRef.current && !audioError) {
         audioRef.current.pause();
-      } else {
-        soundEngine.stopAmbientCinemaMusic();
       }
+      soundEngine.stopAmbientCinemaMusic();
       setIsPlaying(false);
     } else {
-      if (audioRef.current && customAudioUrl) {
-        audioRef.current.play().catch(() => {
-          // If browser blocked audio playback, fallback to ambient synthesis
+      if (audioRef.current && !audioError) {
+        audioRef.current.play().then(() => {
+          setIsPlaying(true);
+        }).catch(() => {
           soundEngine.startAmbientCinemaMusic();
+          setIsPlaying(true);
         });
       } else {
-        // Ambient golden cinema sound
         soundEngine.startAmbientCinemaMusic();
+        setIsPlaying(true);
       }
-      setIsPlaying(true);
     }
   };
 
   useEffect(() => {
-    // If audio URL updates while playing
-    if (customAudioUrl && audioRef.current && isPlaying) {
+    // If custom uploaded audio updates
+    if (customAudioUrl && audioRef.current) {
+      setAudioError(false);
       soundEngine.stopAmbientCinemaMusic();
-      audioRef.current.play().catch(() => {});
+      if (isPlaying) {
+        audioRef.current.play().catch(() => {});
+      }
     }
   }, [customAudioUrl, isPlaying]);
 
@@ -47,7 +51,6 @@ export const Header: React.FC<HeaderProps> = ({ customAudioUrl, onAudioUpload })
     const file = e.target.files?.[0];
     if (file) {
       onAudioUpload(file);
-      // Auto play once user uploads their file
       setTimeout(() => {
         if (audioRef.current) {
           audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
@@ -58,14 +61,13 @@ export const Header: React.FC<HeaderProps> = ({ customAudioUrl, onAudioUpload })
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-[#FAF7F2]/90 border-b border-[#E8DFC8] transition-colors">
-      {customAudioUrl && (
-        <audio
-          ref={audioRef}
-          src={customAudioUrl}
-          loop
-          onEnded={() => setIsPlaying(false)}
-        />
-      )}
+      <audio
+        ref={audioRef}
+        src={customAudioUrl || '/music.mp3'}
+        loop
+        onError={() => setAudioError(true)}
+        onEnded={() => setIsPlaying(false)}
+      />
       <input
         ref={fileInputRef}
         type="file"
